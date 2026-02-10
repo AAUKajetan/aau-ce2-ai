@@ -1,0 +1,10 @@
+make notes about:
+
+    w (t+1)= wt + wDelta 
+    wDelta = lParam(ExpectedOutput - LastOutput) - for xi
+
+general infor to nural network
+overview of the ML aloritms other than nural network
+
+datasets formats
+data pre-processing
