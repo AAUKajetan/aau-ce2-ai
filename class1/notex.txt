@@ -8,3 +8,15 @@ overview of the ML aloritms other than nural network
 
 datasets formats
 data pre-processing
+
+
+data reducion = dimension reduction
+
+for data transformatiomnm (make it numerical)
+nominal category data
+cardinal category data (XL/M/S)
+
+
+feature regulazation (add weigds to features)
+
+overfitting underfitting high bias high variance
