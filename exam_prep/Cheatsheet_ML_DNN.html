@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ML & DNN Cheat Sheet</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 1100px; margin: 0 auto; padding: 2rem; background: #fafafa; color: #111; }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 0.25rem; }
+  .subtitle { font-size: 14px; color: #666; margin-bottom: 2rem; }
+  .module-title { font-size: 12px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 8px; display: inline-block; margin-bottom: 10px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 2rem; }
+  .card { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 12px; padding: 12px 14px; }
+  .card-title { font-size: 13px; font-weight: 500; margin: 0 0 8px; }
+  .card-body { font-size: 12px; color: #555; line-height: 1.6; margin: 0; }
+  code { font-family: monospace; font-size: 11px; background: #f4f4f4; border-radius: 6px; padding: 5px 8px; display: block; margin-top: 6px; line-height: 1.5; white-space: pre; }
+  hr { border: none; border-top: 0.5px solid #e0e0e0; margin: 1.5rem 0; }
+  .figrow { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-bottom: 2rem; }
+  .fig { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 12px; padding: 8px; text-align: center; }
+  .fig img { max-width: 100%; max-height: 180px; object-fit: contain; border-radius: 6px; }
+  .fig figcaption { font-size: 11px; color: #777; margin-top: 4px; }
+  figure.fig { margin: 0; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #1a1a1a; color: #eee; }
+    .card { background: #242424; border-color: #333; }
+    .fig { background: #fff; border-color: #333; }
+    .fig figcaption { color: #555; }
+    .card-body { color: #aaa; }
+    code { background: #2e2e2e; color: #eee; }
+    hr { border-color: #333; }
+  }
+</style>
+</head>
+<body>
+<h1>ML & DNN — Exam Cheat Sheet</h1>
+<p class="subtitle">Modules 1, 2, 3, 9, 10 · Based on course materials only</p>
+
+<!-- MODULE 1 -->
+<p class="module-title" style="background:#EEEDFE; color:#3C3489;">Module 1 — ML foundations</p>
+<div class="grid">
+  <div class="card">
+    <p class="card-title">ML taxonomy</p>
+    <p class="card-body">AI ⊃ ML ⊃ Deep Learning<br><br>
+      <b>Supervised</b> — labeled data, f(X)→Y<br>
+      <b>Unsupervised</b> — find structure in X<br>
+      <b>Semi-supervised</b> — mix of both<br>
+      <b>RL</b> — agent learns from rewards
+    </p>
+  </div>
+  <div class="card">
+    <p class="card-title">Preprocessing pipeline</p>
+    <p class="card-body">
+      1. <b>Clean</b> — missing values, outliers<br>
+      2. <b>Transform</b> — normalize, encode<br>
+      3. <b>Select/Extract</b> — PCA or LDA<br>
+      4. <b>Split</b> — train / val / test<br><br>
+      ⚠ Always split before scaling
+    </p>
+  </div>
+  <div class="card">
+    <p class="card-title">PCA vs LDA</p>
+    <p class="card-body">
+      <b>PCA</b> — unsupervised, max variance<br>
+      Uses covariance matrix<br>
+      Max components: min(n−1, d)<br><br>
+      <b>LDA</b> — supervised, max class separation<br>
+      Uses Sw⁻¹SB<br>
+      Max components: C−1
+    </p>
+  </div>
+</div>
+<div class="figrow">
+  <figure class="fig"><img src="figures/m1_ai_ml_dl_venn.png" alt="AI ML DL venn"><figcaption>AI ⊃ ML ⊃ DL</figcaption></figure>
+  <figure class="fig"><img src="figures/m1_preprocessing_pipeline.png" alt="preprocessing pipeline"><figcaption>Preprocessing pipeline</figcaption></figure>
+  <figure class="fig"><img src="figures/m1_pca_concept.png" alt="PCA concept"><figcaption>PCA</figcaption></figure>
+  <figure class="fig"><img src="figures/m1_train_val_test_workflow.png" alt="train val test workflow"><figcaption>Train / val / test workflow</figcaption></figure>
+</div>
+
+<hr>
+
+<!-- MODULE 2 -->
+<p class="module-title" style="background:#E1F5EE; color:#085041;">Module 2 — MLP and CNN</p>
+<div class="grid">
+  <div class="card">
+    <p class="card-title">Backpropagation</p>
+    <p class="card-body">Chain rule backward through layers</p>
+    <code>δᴸ = ∇ₐL ⊙ f′(zᴸ)
+δˡ = (Wˡ⁺¹ᵀ δˡ⁺¹) ⊙ f′(zˡ)
+W ← W − η ∇W L</code>
+    <p class="card-body" style="margin-top:8px;"><b>Loss functions</b><br>MSE — regression<br>Binary CE — binary classification<br>Categorical CE — multi-class</p>
+  </div>
+  <div class="card">
+    <p class="card-title">Activation functions</p>
+    <p class="card-body">
+      <b>Sigmoid</b> — binary output; max grad 0.25<br>
+      <b>Tanh</b> — zero-centered hidden layers<br>
+      <b>ReLU</b> — default hidden layer choice<br>
+      <b>Leaky ReLU</b> — avoids dying ReLU<br>
+      <b>Softmax</b> — multi-class output
+    </p>
+  </div>
+  <div class="card">
+    <p class="card-title">CNN</p>
+    <p class="card-body">Conv → BN → ReLU → Pool<br><br>
+      Output size: ⌊(W−k+2p)/s⌋+1<br><br>
+      Early layers: edges/textures<br>
+      Deep layers: shapes/objects<br>
+      Parameter sharing → fewer weights
+    </p>
+  </div>
+  <div class="card">
+    <p class="card-title">Regularization</p>
+    <p class="card-body">
+      <b>Dropout</b> — zero random activations<br>
+      <b>L1/L2</b> — penalize large weights<br>
+      <b>Batch norm</b> — normalize layer inputs<br>
+      <b>Data augmentation</b> — flip/crop/rotate<br>
+      <b>Early stopping</b> — stop at val loss min
+    </p>
+  </div>
+</div>
+<div class="figrow">
+  <figure class="fig"><img src="figures/m2_perceptron.png" alt="perceptron"><figcaption>Perceptron</figcaption></figure>
+  <figure class="fig"><img src="figures/m2_mlp_architecture.png" alt="MLP architecture"><figcaption>MLP</figcaption></figure>
+  <figure class="fig"><img src="figures/m2_convolution_operation.png" alt="convolution operation"><figcaption>Convolution</figcaption></figure>
+  <figure class="fig"><img src="figures/m2_cnn_typical_architecture.png" alt="CNN architecture"><figcaption>Typical CNN</figcaption></figure>
+</div>
+
+<hr>
+
+<!-- MODULE 3 -->
+<p class="module-title" style="background:#FAECE7; color:#712B13;">Module 3 — RNN, LSTM, GRU</p>
+<div class="grid">
+  <div class="card">
+    <p class="card-title">Vanilla RNN</p>
+    <p class="card-body">Hidden state carries memory across steps</p>
+    <code>hₜ = tanh(Wₓxₜ + Wₕhₜ₋₁ + b)
+yₜ = Wᵧhₜ + bᵧ</code>
+    <p class="card-body" style="margin-top:8px;">Vanishing: |Wₕₕ|&lt;1 → gradient → 0 for early steps<br>Exploding: |Wₕₕ|&gt;1 → gradient → ∞ → fix with gradient clipping</p>
+  </div>
+  <div class="card">
+    <p class="card-title">LSTM gates</p>
+    <p class="card-body">
+      <b>Forget fₜ</b> — erase cell state<br>
+      <b>Input iₜ</b> — write new info<br>
+      <b>Candidate C̃ₜ</b> — new values<br>
+      <b>Output oₜ</b> — expose hidden state
+    </p>
+    <code>Cₜ = fₜ⊙Cₜ₋₁ + iₜ⊙C̃ₜ
+hₜ = oₜ⊙tanh(Cₜ)</code>
+    <p class="card-body" style="margin-top:6px;">Additive update → no vanishing grad</p>
+  </div>
+  <div class="card">
+    <p class="card-title">GRU</p>
+    <p class="card-body">
+      Simplified LSTM — 2 gates only<br><br>
+      <b>Reset rₜ</b> — how much past to forget<br>
+      <b>Update zₜ</b> — interpolate old/new state<br><br>
+      Fewer params, comparable performance
+    </p>
+  </div>
+  <div class="card">
+    <p class="card-title">Variants</p>
+    <p class="card-body">
+      <b>Bidirectional</b> — forward + backward; full context<br><br>
+      <b>Stacked</b> — multiple layers; higher abstractions<br><br>
+      <b>Word2Vec</b> — dense embeddings; king−man+woman≈queen
+    </p>
+  </div>
+</div>
+<div class="figrow">
+  <figure class="fig"><img src="figures/m3_rnn_unrolled.png" alt="RNN unrolled"><figcaption>RNN unrolled</figcaption></figure>
+  <figure class="fig"><img src="figures/m3_lstm_chain.png" alt="LSTM chain"><figcaption>LSTM chain</figcaption></figure>
+  <figure class="fig"><img src="figures/m3_lstm_cell_state.png" alt="LSTM cell state"><figcaption>Cell state highway</figcaption></figure>
+  <figure class="fig"><img src="figures/m3_gru_cell.png" alt="GRU cell"><figcaption>GRU</figcaption></figure>
+</div>
+
+<hr>
+
+<!-- MODULE 9 -->
+<p class="module-title" style="background:#E6F1FB; color:#0C447C;">Module 9 — Autoencoders and VAE</p>
+<div class="grid">
+  <div class="card">
+    <p class="card-title">Autoencoder family</p>
+    <p class="card-body">
+      <b>Basic AE</b> — compression, reconstruction<br>
+      <b>Denoising AE</b> — noisy input → clean output<br>
+      <b>Sparse AE</b> — L1 penalty on z<br>
+      <b>Contractive AE</b> — Jacobian penalty
+    </p>
+    <code>L = ||x − x̂||²</code>
+  </div>
+  <div class="card">
+    <p class="card-title">VAE</p>
+    <p class="card-body">Encoder outputs μ and <b>log σ²</b> — not a point<br>z ~ N(μ(x), σ²(x))</p>
+    <code>L = E[log P(x|z)]
+  − KL(q(z|x) || N(0,I))
+
+KL = -½ Σ(1 + log σᵢ² − μᵢ² − σᵢ²)</code>
+    <p class="card-body" style="margin-top:6px;">KL term → smooth, complete latent space<br>log σ² used for stability; σ = exp(½ log σ²)</p>
+  </div>
+  <div class="card">
+    <p class="card-title">Reparameterization trick</p>
+    <p class="card-body">Sampling is not differentiable. Rewrite:</p>
+    <code>ε ~ N(0, I)
+z = μ + σ ⊙ ε</code>
+    <p class="card-body" style="margin-top:6px;">Gradient flows through μ and σ; ε is fixed noise</p>
+  </div>
+  <div class="card">
+    <p class="card-title">AE vs VAE</p>
+    <p class="card-body">
+      <b>AE</b> — scattered points, gaps, can't sample<br><br>
+      <b>VAE</b> — smooth continuous distribution, sample anywhere<br><br>
+      β-VAE: β·KL → more disentangled factors
+    </p>
+  </div>
+</div>
+<div class="figrow">
+  <figure class="fig"><img src="figures/m9_autoencoder_architecture.png" alt="autoencoder architecture"><figcaption>Autoencoder</figcaption></figure>
+  <figure class="fig"><img src="figures/m9_vae_architecture.png" alt="VAE architecture"><figcaption>VAE — latent distributions</figcaption></figure>
+  <figure class="fig"><img src="figures/m9_reparameterization.png" alt="reparameterization trick"><figcaption>Reparameterization</figcaption></figure>
+  <figure class="fig"><img src="figures/m9_latent_regularized.png" alt="regularized latent space"><figcaption>Regularized latent space</figcaption></figure>
+</div>
+
+<hr>
+
+<!-- MODULE 10 -->
+<p class="module-title" style="background:#FAEEDA; color:#633806;">Module 10 — Attention, Transformers, GANs</p>
+<div class="grid">
+  <div class="card">
+    <p class="card-title">Attention (Bahdanau)</p>
+    <p class="card-body">Decoder attends to all encoder states — no bottleneck</p>
+    <code>cₜ = Σⱼ αₜⱼ hⱼ
+αₜⱼ = softmax(score(sₜ₋₁, hⱼ))</code>
+  </div>
+  <div class="card">
+    <p class="card-title">Scaled dot-product attention</p>
+    <code>Attention(Q,K,V) =
+  softmax(QKᵀ/√dₖ) · V</code>
+    <p class="card-body" style="margin-top:6px;">
+      /√dₖ prevents large dot products<br>
+      n² dot products per head<br>
+      Multi-head: h parallel heads concatenated
+    </p>
+  </div>
+  <div class="card">
+    <p class="card-title">Transformer blocks</p>
+    <p class="card-body">
+      <b>Encoder block (×N)</b><br>
+      Multi-head self-attention<br>
+      → Add &amp; Norm → FFN → Add &amp; Norm<br><br>
+      <b>Decoder block (×N)</b><br>
+      Masked self-attention (causal)<br>
+      → Cross-attention (Q from decoder, K/V from encoder)<br>
+      → Add &amp; Norm → FFN → Add &amp; Norm<br><br>
+      <b>Positional encoding</b> — sine/cosine; injects order into permutation-invariant attention
+    </p>
+  </div>
+  <div class="card">
+    <p class="card-title">GAN</p>
+    <p class="card-body">Generator G(z) vs Discriminator D(x)</p>
+    <code>min_G max_D E[log D(x)]
+  + E[log(1−D(G(z)))]</code>
+    <p class="card-body" style="margin-top:6px;">
+      Train D → train G with <b>log D(G(z))</b><br>
+      (avoids vanishing grad when D(G(z))≈0 early)<br>
+      Nash eq: D(x)=0.5 everywhere<br>
+      Mode collapse = G variety collapses
+    </p>
+  </div>
+</div>
+<div class="figrow">
+  <figure class="fig"><img src="figures/m10_scaled_dot_product.png" alt="scaled dot product attention"><figcaption>Scaled dot-product attention</figcaption></figure>
+  <figure class="fig"><img src="figures/m10_multihead_attention.png" alt="multi-head attention"><figcaption>Multi-head attention</figcaption></figure>
+  <figure class="fig"><img src="figures/m10_transformer_architecture.png" alt="transformer architecture"><figcaption>Transformer</figcaption></figure>
+  <figure class="fig"><img src="figures/m10_gan_architecture.png" alt="GAN architecture"><figcaption>GAN</figcaption></figure>
+</div>
+
+<hr>
+
+<!-- ABBREVIATIONS -->
+<p class="module-title" style="background:#EFEFEF; color:#444;">Abbreviations</p>
+<div class="grid">
+  <div class="card">
+    <p class="card-title" style="color:#3C3489;">Foundations (M1)</p>
+    <p class="card-body">
+      <b>AI</b> — Artificial Intelligence<br>
+      <b>ML</b> — Machine Learning<br>
+      <b>DL</b> — Deep Learning<br>
+      <b>PCA</b> — Principal Component Analysis<br>
+      <b>LDA</b> — Linear Discriminant Analysis<br>
+      <b>Sw / SB</b> — within- / between-class scatter
+    </p>
+  </div>
+  <div class="card">
+    <p class="card-title" style="color:#085041;">MLP &amp; CNN (M2)</p>
+    <p class="card-body">
+      <b>MLP</b> — Multi-Layer Perceptron<br>
+      <b>FC</b> — Fully Connected (layer)<br>
+      <b>FFN</b> — Feed-Forward Network<br>
+      <b>ReLU</b> — Rectified Linear Unit<br>
+      <b>CNN</b> — Convolutional Neural Network<br>
+      <b>BN</b> — Batch Normalization<br>
+      <b>MSE</b> — Mean Squared Error<br>
+      <b>CE / BCE</b> — (Binary) Cross-Entropy
+    </p>
+  </div>
+  <div class="card">
+    <p class="card-title" style="color:#712B13;">Sequence models (M3)</p>
+    <p class="card-body">
+      <b>RNN</b> — Recurrent Neural Network<br>
+      <b>BPTT</b> — Backpropagation Through Time<br>
+      <b>LSTM</b> — Long Short-Term Memory<br>
+      <b>GRU</b> — Gated Recurrent Unit<br>
+      <b>CBOW</b> — Continuous Bag of Words<br>
+      <b>POS</b> — Part of Speech (tagging)
+    </p>
+  </div>
+  <div class="card">
+    <p class="card-title" style="color:#0C447C;">Generative (M9–10)</p>
+    <p class="card-body">
+      <b>AE</b> — Autoencoder<br>
+      <b>VAE</b> — Variational Autoencoder<br>
+      <b>ELBO</b> — Evidence Lower Bound<br>
+      <b>KL</b> — Kullback–Leibler divergence<br>
+      <b>GAN</b> — Generative Adversarial Network<br>
+      <b>WGAN</b> — Wasserstein GAN
+    </p>
+  </div>
+  <div class="card">
+    <p class="card-title" style="color:#633806;">Attention (M10)</p>
+    <p class="card-body">
+      <b>MHA</b> — Multi-Head Attention<br>
+      <b>Q / K / V</b> — Query / Key / Value<br>
+      <b>dₖ</b> — key dimension (scaling factor)<br>
+      <b>PE</b> — Positional Encoding
+    </p>
+  </div>
+</div>
+
+</body>
+</html>

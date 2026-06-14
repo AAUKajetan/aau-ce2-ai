@@ -1,0 +1,9 @@
+services:
+  studyhub:
+    build:
+      context: .
+      dockerfile: webapp/Dockerfile
+    container_name: studyhub
+    ports:
+      - "6767:6767"
+    restart: unless-stopped

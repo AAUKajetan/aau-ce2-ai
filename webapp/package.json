@@ -1,0 +1,16 @@
+{
+  "name": "aau-ce2-ai-study-hub",
+  "version": "1.0.0",
+  "description": "Static study webapp for AAU CE2 AI/ML/DNN/RL exam preparation",
+  "scripts": {
+    "build":   "node build.js",
+    "preview": "node server.js",
+    "start":   "node build.js && node server.js",
+    "refresh-figures": "node -e \"const fs=require('fs'),path=require('path');const src=path.resolve('../exam_prep/figures');const dst=path.resolve('dist/figures');if(!fs.existsSync(dst)){console.log('Run npm run build first');process.exit(1);}let n=0;for(const f of fs.readdirSync(src)){if(/\\.(png|jpg|jpeg|gif|svg|webp)$/i.test(f)){fs.copyFileSync(path.join(src,f),path.join(dst,f));n++;}}console.log('Copied '+n+' figures.');\""
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "private": true,
+  "dependencies": {}
+}

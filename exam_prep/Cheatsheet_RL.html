@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RL — Exam Cheat Sheet</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 1100px; margin: 0 auto; padding: 2rem; background: #fafafa; color: #111; }
+  h1 { font-size: 22px; font-weight: 500; margin-bottom: 0.25rem; }
+  .subtitle { font-size: 14px; color: #666; margin-bottom: 2rem; }
+  .module-title { font-size: 12px; font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 8px; display: inline-block; margin-bottom: 10px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 2rem; }
+  .card { background: #fff; border: 0.5px solid #e0e0e0; border-radius: 12px; padding: 12px 14px; }
+  .card-title { font-size: 13px; font-weight: 500; margin: 0 0 8px; }
+  .card-body { font-size: 12px; color: #555; line-height: 1.6; margin: 0; }
+  code { font-family: monospace; font-size: 11px; background: #f4f4f4; border-radius: 6px; padding: 5px 8px; display: block; margin-top: 6px; line-height: 1.5; white-space: pre; }
+  hr { border: none; border-top: 0.5px solid #e0e0e0; margin: 1.5rem 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
+  th { background: #f4f4f4; font-weight: 600; padding: 4px 6px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+  td { padding: 3px 6px; border-bottom: 0.5px solid #efefef; color: #444; }
+  @media (prefers-color-scheme: dark) {
+    body { background: #1a1a1a; color: #eee; }
+    .card { background: #242424; border-color: #333; }
+    .card-body { color: #aaa; }
+    code { background: #2e2e2e; color: #eee; }
+    hr { border-color: #333; }
+    th { background: #2e2e2e; color: #ccc; border-color: #444; }
+    td { color: #aaa; border-color: #333; }
+  }
+</style>
+</head>
+<body>
+<h1>RL — Exam Cheat Sheet</h1>
+<p class="subtitle">RL Modules 1–5, DRL Module 3 · Based on course materials only</p>
+
+<!-- MODULE 1 -->
+<p class="module-title" style="background:#EEEDFE; color:#3C3489;">Module 1 — MDP, Bellman, DP, MC, TD</p>
+<div class="grid">
+
+  <div class="card">
+    <p class="card-title">MDP Tuple</p>
+    <p class="card-body"><b>(S, A, P, R, γ)</b><br>S: state space<br>A: action space<br>P(s'|s,a): transition prob<br>R(s,a): expected reward<br>γ ∈ [0,1): discount factor<br><br><b>Markov property:</b> sₜ₊₁ ⊥ history | sₜ</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Returns &amp; Value Functions</p>
+    <code>Gₜ = Σₖ γᵏ rₜ₊ₖ
+
+Vπ(s)   = Eπ[Gₜ | sₜ=s]
+Qπ(s,a) = Eπ[Gₜ | sₜ=s, aₜ=a]
+Vπ(s)   = Σₐ π(a|s) Qπ(s,a)</code>
+    <p class="card-body" style="margin-top:6px;">γ→0: myopic · γ→1: far-sighted</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Bellman Expectation</p>
+    <p class="card-body">Evaluates a given policy π</p>
+    <code>Vπ(s) = Σₐ π(a|s) Σₛ' P(s'|s,a)
+       [R(s,a) + γ Vπ(s')]
+
+Qπ(s,a) = Σₛ' P(s'|s,a) [R(s,a)
+  + γ Σₐ' π(a'|s') Qπ(s',a')]</code>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Bellman Optimality</p>
+    <p class="card-body">Finds the best policy</p>
+    <code>V*(s) = maxₐ Σₛ' P(s'|s,a)
+      [R(s,a) + γ V*(s')]
+
+Q*(s,a) = Σₛ' P(s'|s,a)
+  [R(s,a) + γ maxₐ' Q*(s',a')]
+
+π*(s) = argmaxₐ Q*(s,a)</code>
+  </div>
+
+  <div class="card">
+    <p class="card-title">DP Methods (need model)</p>
+    <p class="card-body"><b>Policy Evaluation:</b> apply Bellman expectation iteratively until Vπ converges<br><br><b>Policy Improvement:</b> π'(s)=argmaxₐ Q(s,a)<br><br><b>Policy Iteration:</b> alternate eval + improvement<br><br><b>Value Iteration:</b> apply Bellman optimality directly</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">MC vs TD</p>
+    <p class="card-body"><b>MC:</b> full episode, compute Gₜ</p>
+    <code>V(sₜ) ← V(sₜ) + α(Gₜ − V(sₜ))</code>
+    <p class="card-body" style="margin-top:6px;">Unbiased · high variance · episodic only<br><br><b>TD(0):</b> one-step bootstrap</p>
+    <code>V(sₜ) ← V(sₜ) + α(rₜ+γV(sₜ₊₁)−V(sₜ))</code>
+    <p class="card-body" style="margin-top:6px;">Biased · low variance · online</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">SARSA vs Q-learning</p>
+    <p class="card-body"><b>SARSA (on-policy):</b></p>
+    <code>Q(s,a) ← Q(s,a) + α[r + γQ(s',a') − Q(s,a)]</code>
+    <p class="card-body" style="margin-top:6px;">a' sampled from ε-greedy → safer path<br><br><b>Q-learning (off-policy):</b></p>
+    <code>Q(s,a) ← Q(s,a) + α[r + γmaxₐ'Q(s',a') − Q(s,a)]</code>
+    <p class="card-body" style="margin-top:6px;">uses max → optimal but cliff-edge path<br>GLIE needed for convergence</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">n-Step &amp; Exploration</p>
+    <code>Gₜ⁽ⁿ⁾ = rₜ+γrₜ₊₁+…+γⁿ⁻¹rₜ₊ₙ₋₁
+     + γⁿV(sₜ₊ₙ)</code>
+    <p class="card-body" style="margin-top:6px;">n=1: TD · n=∞: MC<br><br><b>ε-greedy:</b> random w.p. ε, else argmax Q<br><b>GLIE:</b> ε→0 as t→∞ (needed for convergence)</p>
+  </div>
+
+</div>
+
+<hr>
+
+<!-- MODULE 2 -->
+<p class="module-title" style="background:#E1F5EE; color:#085041;">Module 2 — Deep Q-Networks (DQN)</p>
+<div class="grid">
+
+  <div class="card">
+    <p class="card-title">DQN = Q-learning + NN + 2 tricks</p>
+    <p class="card-body"><b>Problem 1: Correlated samples</b><br>→ Experience Replay Buffer<br><br><b>Problem 2: Moving target</b><br>→ Target Network θ⁻<br><br><b>Deadly triad:</b> function approx + bootstrap + off-policy → instability</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">DQN Target &amp; Loss</p>
+    <code>yₜ = rₜ + (1−done)·γ·maxₐ' Qθ⁻(s',a')
+
+L(θ) = E[(yₜ − Qθ(sₜ,aₜ))²]</code>
+    <p class="card-body" style="margin-top:6px;">Gradient only through online net θ<br>yₜ is treated as a constant (stop gradient)<br><br><b>Huber loss:</b> L1 for |δ|&gt;1, L2 otherwise<br>Robust to large TD errors — preferred</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Experience Replay</p>
+    <p class="card-body">Circular buffer size N (e.g., 1M)<br>Store: (s, a, r, s', done)<br>Sample random mini-batches<br>→ Breaks temporal correlations<br>→ Enables data reuse<br><br>Warm up ≥1000 steps before training</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Target Network θ⁻</p>
+    <p class="card-body">Hard copy every C steps:<br><code>θ⁻ ← θ   (every C steps)</code>Parameters frozen between copies<br>→ Stabilizes the TD target<br><br>Without it: moving target → oscillation / divergence</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">ε-Greedy Decay</p>
+    <code>aₜ = argmaxₐ Qθ(s,a)  w.p. 1−ε
+aₜ ~ Uniform(A)         w.p. ε</code>
+    <p class="card-body" style="margin-top:6px;">Decay: 1.0 → 0.01 over 10⁵ steps<br>Evaluate always with ε=0</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Hyperparameters &amp; Ablations</p>
+    <table>
+      <tr><th>Param</th><th>Typical Value</th></tr>
+      <tr><td>Replay buffer</td><td>10⁵ – 10⁶</td></tr>
+      <tr><td>Batch size</td><td>32 – 64</td></tr>
+      <tr><td>Target update</td><td>1000 – 10000 steps</td></tr>
+      <tr><td>ε start/end</td><td>1.0 / 0.01 over 10⁵ steps</td></tr>
+      <tr><td>Learning rate</td><td>1e-4 – 2.5e-4</td></tr>
+      <tr><td>γ</td><td>0.99</td></tr>
+      <tr><td>Optimizer</td><td>Adam (default)</td></tr>
+    </table>
+    <p class="card-body" style="margin-top:6px;"><b>Ablation effects:</b> No replay→correlated updates; No target→moving target divergence; Huber→MSE: sensitive to outliers; Adam→SGD: needs careful lr tuning</p>
+  </div>
+
+</div>
+
+<hr>
+
+<!-- MODULE 3 -->
+<p class="module-title" style="background:#FAECE7; color:#712B13;">Module 3 — DDQN &amp; Policy Gradients</p>
+<div class="grid">
+
+  <div class="card">
+    <p class="card-title">Overestimation in DQN</p>
+    <p class="card-body">Same network selects <i>and</i> evaluates the best action → systematically picks overestimated action → positive bias accumulates</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Double DQN (DDQN)</p>
+    <p class="card-body">Decouple selection and evaluation:</p>
+    <code>a* = argmaxₐ Qθ(s',a)    ← online
+yₜ = rₜ + γ Qθ⁻(s', a*)  ← target</code>
+    <p class="card-body" style="margin-top:6px;">Drop-in replacement for DQN<br>Same arch · change only 2 lines</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Policy Gradient Theorem</p>
+    <p class="card-body">Directly optimize πθ(a|s)</p>
+    <code>∇θJ(θ) = Eπ[∇θ log πθ(a|s) · Gₜ]</code>
+    <p class="card-body" style="margin-top:6px;">log πθ: direction to increase P(a|s)<br>Weighted by Gₜ: reinforce good actions</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">REINFORCE</p>
+    <code>Gₜ = Σₖ γᵏ rₜ₊ₖ  (compute backward)
+θ ← θ + α ∇θ log πθ(aₜ|sₜ) · Gₜ</code>
+    <p class="card-body" style="margin-top:6px;">Unbiased · high variance<br>On-policy: fresh data per episode<br>In code: L = −Σ log_prob(aₜ) · Gₜ</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Baseline &amp; Advantage</p>
+    <code>∇θJ = E[∇θ log π(a|s)·(Gₜ−b(sₜ))]
+
+Aₜ = Gₜ − V(sₜ)         ← MC form
+Aₜ = Qπ(s,a) − Vπ(s)   ← general</code>
+    <p class="card-body" style="margin-top:6px;">Baseline <b>doesn't bias</b> gradient (cancels in expectation)<br>Natural choice: b(s)=V(s)<br>Aₜ&gt;0 → increase π(a|s)<br>Aₜ&lt;0 → decrease π(a|s)</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Actor-Critic (one-step)</p>
+    <p class="card-body"><b>Actor</b> πθ(a|s) — policy gradient<br><b>Critic</b> Vφ(s) — TD baseline</p>
+    <code>yₜ = rₜ + γ(1−done)·Vφ(sₜ₊₁)
+δₜ = yₜ − Vφ(sₜ)   ← advantage
+
+Actor loss:  −log πθ(aₜ|sₜ) · δₜ
+Critic loss: (Vφ(sₜ) − yₜ)²</code>
+    <p class="card-body" style="margin-top:6px;">Online updates (no full episode)<br>Lower variance than REINFORCE</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Algorithm Comparison</p>
+    <table>
+      <tr><th>Algo</th><th>On/Off</th><th>Signal</th><th>Var</th></tr>
+      <tr><td>DQN</td><td>Off</td><td>TD target</td><td>Low</td></tr>
+      <tr><td>DDQN</td><td>Off</td><td>TD (decoupled)</td><td>Low</td></tr>
+      <tr><td>REINFORCE</td><td>On</td><td>MC Gₜ</td><td>High</td></tr>
+      <tr><td>Actor-Critic</td><td>On</td><td>TD δₜ</td><td>Med</td></tr>
+    </table>
+    <p class="card-body" style="margin-top:6px;">Value-based: discrete only, implicit policy<br>PG: discrete + continuous, explicit policy</p>
+  </div>
+
+</div>
+
+<hr>
+
+<!-- MODULE 4 -->
+<p class="module-title" style="background:#E6F1FB; color:#0C447C;">Module 4 — DDPG &amp; PPO (Continuous Control)</p>
+<div class="grid">
+
+  <div class="card">
+    <p class="card-title">Why Continuous Control?</p>
+    <p class="card-body">For aₜ ∈ ℝⁿ: argmax over Q is <b>intractable</b><br><br>DDPG: deterministic actor, differentiate through it<br>PPO: stochastic actor, Gaussian distribution</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">DDPG: 4 Networks</p>
+    <table>
+      <tr><th>Net</th><th>Params</th><th>Role</th></tr>
+      <tr><td>Online actor</td><td>θ</td><td>μθ(s)</td></tr>
+      <tr><td>Target actor</td><td>θ⁻</td><td>stable action</td></tr>
+      <tr><td>Online critic</td><td>φ</td><td>Q(s,a)</td></tr>
+      <tr><td>Target critic</td><td>φ⁻</td><td>TD target</td></tr>
+    </table>
+    <p class="card-body" style="margin-top:6px;">Both target nets needed — prevents actor-critic coupling</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">DDPG Updates</p>
+    <p class="card-body"><b>Soft target update (Polyak):</b></p>
+    <code>θ⁻ ← τθ + (1−τ)θ⁻   τ=0.005</code>
+    <p class="card-body" style="margin-top:6px;"><b>Critic target:</b></p>
+    <code>yₜ = rₜ + γQφ⁻(s', μθ⁻(s'))  (0 if done)</code>
+    <p class="card-body" style="margin-top:6px;"><b>Actor (gradient ascent on Q):</b></p>
+    <code>∇θJ ≈ ∇ₐQφ(s,a)|_{a=μθ(s)} · ∇θμθ(s)</code>
+    <p class="card-body" style="margin-top:6px;"><b>Exploration:</b> aₜ = μθ(sₜ) + Nₜ<br>OU noise (correlated) or Gaussian</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">PPO Clipped Objective</p>
+    <code>rₜ(θ) = πθ(aₜ|sₜ) / πθ_old(aₜ|sₜ)
+
+L^CLIP = E[min(rₜÂₜ,
+  clip(rₜ,1−ε,1+ε)Âₜ)]   ε=0.2</code>
+    <p class="card-body" style="margin-top:6px;">Â&gt;0: increase P(a|s), max (1+ε)×<br>Â&lt;0: decrease P(a|s), min (1−ε)×<br><br><b>Full loss:</b></p>
+    <code>L = L^CLIP − c₁·L^VF + c₂·H[πθ]</code>
+    <p class="card-body" style="margin-top:6px;">c₁≈0.5 (value) · c₂≈0.01 (entropy)</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">GAE (Generalized Advantage)</p>
+    <code>δₜ = rₜ + γV(sₜ₊₁) − V(sₜ)   ← TD residual
+Âₜ = Σₗ (γλ)ˡ δₜ₊ₗ</code>
+    <p class="card-body" style="margin-top:6px;">λ=0: TD(0), low var, high bias<br>λ=1: MC, high var, low bias<br>Typical: λ=0.95<br><br>Normalize advantages before update</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">DDPG vs PPO</p>
+    <table>
+      <tr><th></th><th>DDPG</th><th>PPO</th></tr>
+      <tr><td>Policy</td><td>Deterministic</td><td>Stochastic</td></tr>
+      <tr><td>On/Off</td><td>Off</td><td>On</td></tr>
+      <tr><td>Actions</td><td>Cts only</td><td>Disc + Cts</td></tr>
+      <tr><td>Explore</td><td>Noise</td><td>Entropy</td></tr>
+      <tr><td>Buffer</td><td>Replay</td><td>Rollout</td></tr>
+      <tr><td>Stability</td><td>Moderate</td><td>High</td></tr>
+    </table>
+  </div>
+
+</div>
+
+<hr>
+
+<!-- MODULE 5 -->
+<p class="module-title" style="background:#FEF3E2; color:#7A4109;">Module 5 — Multi-Agent RL (MARL)</p>
+<div class="grid">
+
+  <div class="card">
+    <p class="card-title">Stochastic Games</p>
+    <p class="card-body">MDP extended to N agents:<br><b>(S, A₁,…,Aₙ, P, R₁,…,Rₙ, γ)</b><br><br>Joint action: <b>a</b> = (a₁,…,aₙ)<br>Transition: s' ~ P(·|s,<b>a</b>)<br>Partial obs → <b>Dec-POMDP</b></p>
+    <table style="margin-top:6px;">
+      <tr><th>Setting</th><th>Rewards</th><th>Example</th></tr>
+      <tr><td>Cooperative</td><td>Shared</td><td>Multi-robot</td></tr>
+      <tr><td>Competitive</td><td>Zero-sum</td><td>Chess, RTS</td></tr>
+      <tr><td>Mixed</td><td>Individual</td><td>Autonomous driving</td></tr>
+    </table>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Core Challenges</p>
+    <p class="card-body"><b>1. Non-Stationarity</b><br>Other agents change env → breaks convergence<br><br><b>2. Credit Assignment</b><br>Shared reward: who caused it?<br><br><b>3. Partial Observability</b><br>Agent i sees only oᵢ, not full s<br><br><b>4. Joint Action Explosion</b><br>|A₁|×…×|Aₙ| — exponential in N</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">CTDE Paradigm</p>
+    <p class="card-body"><b>Centralized Training:</b><br>Full state + all agents' obs/actions<br><br><b>Decentralized Execution:</b><br>Each agent uses only oᵢ<br><br>→ Rich credit assignment during training<br>→ Scalable at test time</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">VDN vs QMIX</p>
+    <p class="card-body"><b>VDN:</b></p>
+    <code>Q_tot = Σᵢ Qᵢ(oᵢ,aᵢ)</code>
+    <p class="card-body" style="margin-top:4px;">Additivity assumption (strong)<br><br><b>QMIX:</b></p>
+    <code>Q_tot = f_mix(Q₁,…,Qₙ; s)</code>
+    <p class="card-body" style="margin-top:4px;">Mixing net conditioned on global s<br><b>IGM condition (monotonicity):</b></p>
+    <code>∂Q_tot/∂Qᵢ ≥ 0   for all i</code>
+    <p class="card-body" style="margin-top:4px;">argmax Q_tot = individual argmaxes<br>→ Decentralized greedy execution</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">COMA: Counterfactual Advantage</p>
+    <p class="card-body">Centralized critic estimates Q(s,<b>a</b>)<br>Credit assignment for agent i:</p>
+    <code>Aᵢ(s,a) = Q(s,a)
+  − Σ_{a'ᵢ} πᵢ(a'ᵢ|oᵢ) Q(s,a₋ᵢ,a'ᵢ)</code>
+    <p class="card-body" style="margin-top:6px;">Marginalizes agent i's own actions<br>while holding all others fixed<br>→ Isolates i's contribution</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">MADDPG &amp; MAPPO</p>
+    <p class="card-body"><b>MADDPG:</b><br>Centralized critic Qᵢ(s, a₁,…,aₙ)<br>Decentralized actor μᵢ(oᵢ)<br>Off-policy + replay buffer<br>Works: coop + competitive<br><br><b>MAPPO:</b><br>PPO + centralized critic (global state)<br>Decentralized actors (param sharing ok)<br>Strong coop baseline</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Additional Techniques</p>
+    <p class="card-body"><b>Self-Play:</b> train vs copies of self; risk: cyclic strategies<br><br><b>Parameter Sharing:</b> all agents share weights; agent id as input; homogeneous agents only<br><br><b>Communication:</b> DIAL, CommNet — differentiable, learns what to communicate</p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">MARL Algorithm Summary</p>
+    <table>
+      <tr><th>Algo</th><th>Key Property</th></tr>
+      <tr><td>IQL</td><td>Simple; fails (non-stationarity)</td></tr>
+      <tr><td>VDN</td><td>Additive Q decomp</td></tr>
+      <tr><td>QMIX</td><td>Monotonic mixing; IGM</td></tr>
+      <tr><td>COMA</td><td>Counterfactual advantage</td></tr>
+      <tr><td>MADDPG</td><td>Cts actions; central critic</td></tr>
+      <tr><td>MAPPO</td><td>Strong coop baseline</td></tr>
+    </table>
+    <p class="card-body" style="margin-top:6px;"><b>IQL (Independent Learners):</b> each agent runs its own RL (e.g., DQN) ignoring others. Simple but non-stationarity breaks convergence — no guarantees.</p>
+  </div>
+
+</div>
+
+<hr>
+
+<!-- ABBREVIATIONS + QUICK REFERENCE -->
+<p class="module-title" style="background:#EFEFEF; color:#444;">Quick Reference</p>
+<div class="grid">
+
+  <div class="card">
+    <p class="card-title" style="color:#3C3489;">Module 1 Abbreviations</p>
+    <p class="card-body">
+      <b>MDP</b> — Markov Decision Process<br>
+      <b>DP</b> — Dynamic Programming<br>
+      <b>MC</b> — Monte Carlo<br>
+      <b>TD</b> — Temporal Difference<br>
+      <b>SARSA</b> — State-Action-Reward-State-Action<br>
+      <b>GLIE</b> — Greedy in the Limit with Infinite Exploration<br>
+      <b>Gₜ</b> — discounted return<br>
+      <b>Vπ / Qπ</b> — state / action-value function
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="card-title" style="color:#085041;">Module 2–3 Abbreviations</p>
+    <p class="card-body">
+      <b>DQN</b> — Deep Q-Network<br>
+      <b>DDQN</b> — Double DQN<br>
+      <b>PG</b> — Policy Gradient<br>
+      <b>AC</b> — Actor-Critic<br>
+      <b>δₜ</b> — TD error<br>
+      <b>Aₜ</b> — advantage function<br>
+      <b>θ / θ⁻</b> — online / target network params<br>
+      <b>Huber</b> — smooth L1 loss
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="card-title" style="color:#0C447C;">Module 4 Abbreviations</p>
+    <p class="card-body">
+      <b>DDPG</b> — Deep Deterministic Policy Gradient<br>
+      <b>PPO</b> — Proximal Policy Optimization<br>
+      <b>GAE</b> — Generalized Advantage Estimation<br>
+      <b>OU</b> — Ornstein-Uhlenbeck noise<br>
+      <b>τ</b> — soft update rate (0.005)<br>
+      <b>λ</b> — GAE mixing param (0.95)<br>
+      <b>ε</b> — PPO clip param (0.2)<br>
+      <b>μθ(s)</b> — deterministic actor output
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="card-title" style="color:#7A4109;">Module 5 Abbreviations</p>
+    <p class="card-body">
+      <b>MARL</b> — Multi-Agent RL<br>
+      <b>CTDE</b> — Centralized Training, Decentralized Execution<br>
+      <b>Dec-POMDP</b> — Decentralized Partially Observable MDP<br>
+      <b>IGM</b> — Individual-Global Max<br>
+      <b>VDN</b> — Value Decomposition Networks<br>
+      <b>QMIX</b> — Q Mixing network<br>
+      <b>COMA</b> — Counterfactual Multi-Agent<br>
+      <b>MADDPG / MAPPO</b> — Multi-Agent DDPG / PPO
+    </p>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Key Formulas Cheat</p>
+    <code>SARSA:   Q←Q+α[r+γQ(s',a')−Q]
+Q-learn: Q←Q+α[r+γmaxQ(s',·)−Q]
+DQN:     y=r+(1−d)γmaxQθ⁻(s',·)
+DDQN:    a*=argmaxQθ(s',·)
+         y=r+(1−d)γQθ⁻(s',a*)
+REINF:   θ←θ+α∇logπ(a|s)·Gₜ
+GAE:     δ=r+γV(s')−V(s)
+         Â=Σ(γλ)ˡδₜ₊ₗ
+DDPG:    θ⁻←τθ+(1−τ)θ⁻
+PPO:     L=min(rÂ,clip(r,1±ε)Â)</code>
+  </div>
+
+  <div class="card">
+    <p class="card-title">Environments Used</p>
+    <p class="card-body">
+      <b>CliffWalking-v0</b><br>
+      4×12 grid, 48 states, 4 actions<br>
+      Reward: −1/step; cliff: −100+reset<br>
+      Used for: tabular SARSA vs Q-learning<br><br>
+      <b>CartPole-v1</b><br>
+      4D continuous state, 2 discrete actions<br>
+      Reward +1/step; max 500 steps<br>
+      Used for: DQN, DDQN, REINFORCE, AC<br><br>
+      <b>Pendulum-v1</b><br>
+      3D state, continuous torque ∈ [−2,2]<br>
+      Used for: DDPG, PPO
+    </p>
+  </div>
+
+</div>
+
+</body>
+</html>
